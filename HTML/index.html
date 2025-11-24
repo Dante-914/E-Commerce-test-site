@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DS</title>
+  <link rel="stylesheet" href="effexts.css">
+</head>
+<body>
+  <header>
+    <div class="logo">DripStore <span class="ds-badge">DS</span></div>
+    <div class="tagline">Level up Your Premium Drip</div>
+  </header>
+
+  <div class="search-bar-container">
+    <input type="text" class="search-bar" id="searchInput" placeholder="Search categories...">
+    <div class="search-icon">🔍</div>
+  </div>
+
+  <div class="categories">
+    <div class="category active" data-category="all">All</div>
+    <div class="category" data-category="Clothing">Clothing</div>
+    <div class="category" data-category="Home & Living">Home & Living</div>
+    <div class="category" data-category="Jewelry">Jewelry</div>
+    <div class="category" data-category="Wedding">Wedding</div>
+    <div class="category" data-category="Art & Collectibles">Art & Collectibles</div>
+  </div>
+  
+  <div class="filters">
+    <div class="filter-option">
+      <input type="checkbox" id="exclude-digital" checked>
+      <label for="exclude-digital">Exclude digital items</label>
+    </div>
+    <div class="filter-option">
+      <input type="checkbox" id="designhub">
+      <label for="designhub">DesignHub</label>
+    </div>
+  </div>
+  
+  <div class="sort-options">
+    <div><strong>Sort by:</strong> </div>
+    <select class="sort-select">
+      <option>Relevant</option>
+      <option>Price: Low to High</option>
+      <option>Price: High to Low</option>
+      <option>Highest Rated</option>
+      <option>Most Reviews</option>
+    </select>
+  </div>
+
+  <!-- SEARCH RESULTS INFO -->
+  <div class="search-results-info" id="searchResultsInfo"></div>
+  
+  <!-- Dynamic Products Container -->
+  <div class="products-grid" id="products-container">
+    <!-- JavaScript will insert products here -->
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Dante_INC. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Sample product data
+    const products = [
+      {
+        id: 1,
+        title: "Polo Ralph Lauren T-Shirt",
+        seller: "SommyApparel",
+        description: "Premium cotton t-shirt for everyday comfort.",
+        price: 15.99,
+        originalPrice: 29.99,
+        discount: 47,
+        rating: 4,
+        reviews: 458,
+        isDigital: false,
+        badge: "BESTSELLER",
+        imageUrl: "images/products/1.jpg",
+        category: "Clothing"
+      },
+      {
+        id: 2,
+        title: "Thanos- End Game Statue Collectible",
+        seller: "XN Arts",
+        description: "High-performance running shoes with cushioning.",
+        price: 79.99,
+        originalPrice: 119.99,
+        discount: 33,
+        rating: 4.6,
+        reviews: 567,
+        isDigital: false,
+        badge: "BESTSELLER",
+        imageUrl: "images/products/thanos.jpg",
+        category: "Art & Collectibles"
+      },
+      {
+        id: 3,
+        title: "Denim Jacket",
+        seller: "SommyWears",
+        description: "Vintage style denim jacket with premium finish.",
+        price: 49.99,
+        originalPrice: 79.99,
+        discount: 38,
+        rating: 4.5,
+        reviews: 320,
+        isDigital: false,
+        badge: "TRENDING",
+        imageUrl: "images/products/3.jpg",
+        category: "Clothing"
+      },
+      {
+        id: 4,
+        title: "Dress Denim Wedding Gown",
+        seller: "Dress Den",
+        description: "High-performance running shoes with cushioning.",
+        price: 79.99,
+        originalPrice: 119.99,
+        discount: 33,
+        rating: 4.6,
+        reviews: 567,
+        isDigital: false,
+        badge: "BESTSELLER",
+        imageUrl: "images/products/wed.webp",
+        category: "Wedding"
+      },
+      {
+        id: 5,
+        title: "Summer Dress",
+        seller: "FashionLine",
+        description: "Lightweight summer dress with floral pattern.",
+        price: 34.99,
+        originalPrice: 59.99,
+        discount: 42,
+        rating: 4.7,
+        reviews: 156,
+        isDigital: false,
+        badge: "NEW",
+        imageUrl: "images/products/5.jpg",
+        category: "Clothing"
+      },
+      {
+        id: 6,
+        title: "Samsung Smart Watch",
+        seller: "TechGadgets",
+        description: "Feature-rich smartwatch with health monitoring.",
+        price: 199.99,
+        originalPrice: 299.99,
+        discount: 33,
+        rating: 4.8,
+        reviews: 245,
+        isDigital: false,
+        badge: "LUXURY",
+        imageUrl: "images/products/smart_watch.jpg",
+        category: "Jewelry"
+      },
+      {
+        id: 7,
+        title: "Nike - Running Shoes",
+        seller: "SportFit",
+        description: "High-performance running shoes with cushioning.",
+        price: 79.99,
+        originalPrice: 119.99,
+        discount: 33,
+        rating: 4.6,
+        reviews: 567,
+        isDigital: false,
+        badge: "BESTSELLER",
+        imageUrl: "images/products/shoe.jpg",
+        category: "Clothing"
+      },
+      {
+        id: 8,
+        title: "Naruto: Shippuden Statue Collectible",
+        seller: "XM Arts",
+        description: "High-performance running shoes with cushioning.",
+        price: 79.99,
+        originalPrice: 119.99,
+        discount: 33,
+        rating: 4.6,
+        reviews: 567,
+        isDigital: false,
+        badge: "BESTSELLER",
+        imageUrl: "images/products/naruto.jpg",
+        category: "Art & Collectibles"
+      },
+      {
+        id: 9,
+        title: "Design Mockups Bundle",
+        seller: "SommyApparel",
+        description: "1500+ Professional design mockups and assets.",
+        price: 29.99,
+        originalPrice: 99.99,
+        discount: 70,
+        rating: 5,
+        reviews: 1200,
+        isDigital: true,
+        badge: "POPULAR",
+        imageUrl: "images/products/2.jpg",
+        category: "Clothing"
+      },
+      {
+        id: 10,
+        category: "Home & Living",
+        title: "Bose Wireless Headphones",
+        seller: "AudioTech",
+        description: "Noise-cancelling wireless headphones.",
+        price: 89.99,
+        originalPrice: 129.99,
+        discount: 31,
+        rating: 4.3,
+        reviews: 890,
+        isDigital: false,
+        badge: "FEATURED",
+        imageUrl: "images/products/wireless.webp"
+      },
+      {
+        id: 11,
+        title: "Timeless Elegance Wedding Dress",
+        seller: "Timeless Elegance",
+        description: "High-performance running shoes with cushioning.",
+        price: 79.99,
+        originalPrice: 119.99,
+        discount: 33,
+        rating: 4.6,
+        reviews: 567,
+        isDigital: false,
+        badge: "BESTSELLER",
+        imageUrl: "images/products/weddin.webp",
+        category: "Wedding"
+      }
+    ];
+
+    // Search functionality
+    function searchCategories(searchTerm) {
+      const searchLower = searchTerm.toLowerCase().trim();
+      
+      if (searchLower === '') {
+        renderProducts(products);
+        document.getElementById('searchResultsInfo').textContent = '';
+        return;
+      }
+
+      const filteredProducts = products.filter(product => {
+        const category = product.category || '';
+        return category.toLowerCase().includes(searchLower);
+      });
+
+      const resultsInfo = document.getElementById('searchResultsInfo');
+      if (filteredProducts.length > 0) {
+        resultsInfo.textContent = `Found ${filteredProducts.length} products in "${searchTerm}" category`;
+        resultsInfo.style.color = '#25D366';
+      } else {
+        resultsInfo.textContent = `No products found in "${searchTerm}" category`;
+        resultsInfo.style.color = '#ff4757';
+      }
+
+      renderProducts(filteredProducts);
+    }
+
+    // Initialize search
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+      searchCategories(e.target.value);
+    });
+
+    // Clear search when category is clicked
+    document.querySelectorAll('.category').forEach(category => {
+      category.addEventListener('click', function() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('searchResultsInfo').textContent = '';
+      });
+    });
+
+    // WhatsApp order function
+    function orderProduct(productName, productPrice) {
+      const phoneNumber = "8166746199";
+      const message = `🛒 ORDER REQUEST 🛒\n\n📦 Product: ${productName}\n💰 Price: $${productPrice}\n\nHello! I would like to order this product. Please provide:\n• Availability\n• Shipping options\n• Payment methods\n\nThank you!`;
+      const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+      window.open(url, '_blank');
+    }
+
+    // Flip card function
+    function flipCard(element) {
+      const card = element.closest('.product-card');
+      card.classList.toggle('flipped');
+    }
+/// Make entire card clickable for flipping (except buttons)
+function setupCardClicks() {
+  document.addEventListener('click', function(event) {
+    const card = event.target.closest('.product-card');
+    const isButton = event.target.closest('button');
+    const isLink = event.target.closest('a');
+    
+    if (card && !isButton && !isLink) {
+      // Only flip if clicking on the card itself, not buttons/links
+      card.classList.toggle('flipped');
+    }
+  });
+}
+
+// Close flip when clicking outside
+document.addEventListener('click', function(event) {
+  if (!event.target.closest('.product-card')) {
+    document.querySelectorAll('.product-card.flipped').forEach(card => {
+      card.classList.remove('flipped');
+    });
+  }
+});
+
+// Initialize card clicks after products are rendered
+function renderProducts(productsToRender) {
+  const container = document.getElementById('products-container');
+  container.innerHTML = '';
+  
+  if (productsToRender.length === 0) {
+    container.innerHTML = '<div class="no-results">No products found. Try a different category search.</div>';
+    return;
+  }
+  
+  productsToRender.forEach(product => {
+    const productCard = document.createElement('div');
+    productCard.className = 'product-card';
+    
+    const stars = '★'.repeat(Math.floor(product.rating)) + '☆'.repeat(5 - Math.floor(product.rating));
+    
+    productCard.innerHTML = `
+      <div class="card-inner">
+        <div class="card-front">
+          <div class="product-image">
+            <img src="${product.imageUrl}" alt="${product.title}">
+          </div>
+          <div class="product-info">
+            <div class="product-title">${product.title}</div>
+            <div class="product-seller">by ${product.seller}</div>
+            <div class="product-price">
+              <span class="current-price">$${product.price.toFixed(2)}</span>
+              <span class="originalPrice">$${product.originalPrice.toFixed(2)}</span>
+              <span class="discount">${product.discount}% OFF</span>
+            </div>
+            <div class="product-rating">
+              <span class="rating-stars">${stars}</span>
+              <span class="reviews">(${product.reviews})</span>
+            </div>
+            <div>
+              ${product.badge ? `<span class="badge">${product.badge}</span>` : ''}
+              ${product.isDigital ? `<span class="digital-tag">DIGITAL</span>` : ''}
+            </div>
+            <button class="order-now-btn" onclick="orderProduct('${product.title}', ${product.price})">
+              🛒 Order Now
+            </button>
+            <button class="flip-btn" onclick="flipCard(this)">
+              👀 View Full Image
+            </button>
+          </div>
+        </div>
+        <div class="card-back">
+          <div class="full-image-container">
+            <img src="${product.imageUrl}" alt="${product.title}">
+          </div>
+          <button class="flip-btn back" onclick="flipCard(this)">
+            ← Back to Details
+          </button>
+        </div>
+      </div>
+    `;
+    
+    container.appendChild(productCard);
+  });
+  
+  // Setup card click functionality after rendering
+  setTimeout(setupCardClicks, 0);
+}
+
+    // Category filter function
+    function filterByCategory(category) {
+      let filteredProducts;
+      
+      if (category === 'all') {
+        filteredProducts = products;
+      } else {
+        filteredProducts = products.filter(product => product.category === category);
+      }
+      
+      document.getElementById('products-container').innerHTML = '';
+      renderProducts(filteredProducts);
+    }
+
+    // Combined filter function
+    function applyFilters() {
+      const excludeDigital = document.getElementById('exclude-digital').checked;
+      const designhubOnly = document.getElementById('designhub').checked;
+      const activeCategory = document.querySelector('.category.active').getAttribute('data-category');
+      
+      let filteredProducts = [...products];
+      
+      if (activeCategory !== 'all') {
+        filteredProducts = filteredProducts.filter(product => product.category === activeCategory);
+      }
+      
+      if (excludeDigital) {
+        filteredProducts = filteredProducts.filter(product => !product.isDigital);
+      }
+      
+      if (designhubOnly) {
+        filteredProducts = filteredProducts.filter(product => product.seller === 'DesignHub');
+      }
+      
+      document.getElementById('products-container').innerHTML = '';
+      renderProducts(filteredProducts);
+    }
+
+    // Category filter functionality
+    document.querySelectorAll('.category').forEach(category => {
+      category.addEventListener('click', function() {
+        document.querySelectorAll('.category').forEach(cat => cat.classList.remove('active'));
+        this.classList.add('active');
+        const selectedCategory = this.getAttribute('data-category');
+        filterByCategory(selectedCategory);
+      });
+    });
+
+    // Filter functionality
+    document.getElementById('exclude-digital').addEventListener('change', function() {
+      applyFilters();
+    });
+
+    document.getElementById('designhub').addEventListener('change', function() {
+      applyFilters();
+    });
+
+    // Sort functionality
+    document.querySelector('.sort-select').addEventListener('change', function() {
+      const sortBy = this.value;
+      const activeCategory = document.querySelector('.category.active').getAttribute('data-category');
+      const excludeDigital = document.getElementById('exclude-digital').checked;
+      const designhubOnly = document.getElementById('designhub').checked;
+      
+      let filteredProducts = [...products];
+      
+      if (activeCategory !== 'all') {
+        filteredProducts = filteredProducts.filter(product => product.category === activeCategory);
+      }
+      
+      if (excludeDigital) {
+        filteredProducts = filteredProducts.filter(product => !product.isDigital);
+      }
+      
+      if (designhubOnly) {
+        filteredProducts = filteredProducts.filter(product => product.seller === 'DesignHub');
+      }
+      
+      switch(sortBy) {
+        case 'Price: Low to High':
+          filteredProducts.sort((a, b) => a.price - b.price);
+          break;
+        case 'Price: High to Low':
+          filteredProducts.sort((a, b) => b.price - a.price);
+          break;
+        case 'Highest Rated':
+          filteredProducts.sort((a, b) => b.rating - a.rating);
+          break;
+        case 'Most Reviews':
+          filteredProducts.sort((a, b) => b.reviews - a.reviews);
+          break;
+        default:
+          break;
+      }
+      
+      document.getElementById('products-container').innerHTML = '';
+      renderProducts(filteredProducts);
+    });
+
+    // Initial render
+    renderProducts(products);
+  </script>
+</body>
+</html>
