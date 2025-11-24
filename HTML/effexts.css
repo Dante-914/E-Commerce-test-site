@@ -47,7 +47,7 @@ header {
   border: 1px solid #ddd;
   font-size: 1rem;
   transition: all 0.3s ease;
-  background: white;
+  background-image: url(images/products/red-space-20150711223512-55a137b101254.jpg);
 }
 
 .search-bar:focus {
@@ -422,4 +422,5 @@ footer {
     right: 12px;
     font-size: 1.1rem;
   }
+
 }
