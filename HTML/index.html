@@ -1,64 +1,255 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DS</title>
-  <link rel="stylesheet" href="effexts.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DripStore DS - Premium Clothing & Fashion Online Store</title>
+  <meta name="description" content="Shop premium clothing, jewelry, home decor, and collectibles at DripStore. Level up your style with our exclusive collection. Fast shipping and secure payments.">
+  <meta name="keywords" content="clothing, fashion, jewelry, home decor, wedding dresses, collectibles, online shopping, premium fashion">
+  <meta name="author" content="Dante_INC">
+  
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="DripStore DS - Premium Clothing & Fashion">
+  <meta property="og:description" content="Shop premium clothing, jewelry, home decor, and collectibles. Level up your style with DripStore.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://dripstore-ds.com">
+  <meta property="og:image" content="https://dripstore-ds.com/images/og-image.jpg">
+  <meta property="og:site_name" content="DripStore DS">
+  
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="DripStore DS - Premium Clothing & Fashion">
+  <meta name="twitter:description" content="Shop premium clothing, jewelry, home decor, and collectibles at DripStore.">
+  <meta name="twitter:image" content="https://dripstore-ds.com/images/twitter-image.jpg">
+  
+  <!-- Additional SEO Meta Tags -->
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="theme-color" content="#6a11cb">
+  <meta name="msapplication-TileColor" content="#6a11cb">
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://dripstore-ds.com">
+  
+  <!-- Favicon and App Icons -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  
+  <!-- Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Store",
+    "name": "DripStore DS",
+    "description": "Premium clothing, jewelry, home decor, and collectibles online store",
+    "url": "https://dripstore-ds.com",
+    "logo": "https://dripstore-ds.com/images/logo.png",
+    "telephone": "+1-816-674-6199",
+    "email": "support@dripstore-ds.com",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "City",
+      "addressRegion": "State",
+      "postalCode": "00000",
+      "addressCountry": "US"
+    },
+    "openingHours": "Mo-Su 09:00-18:00",
+    "priceRange": "$$",
+    "sameAs": [
+      "https://www.facebook.com/dripstoreds",
+      "https://www.instagram.com/dripstoreds"
+    ]
+  }
+  </script>
+  
+  <link rel="stylesheet" href="effexts.css" />
+  <script src="https://js.stripe.com/v3/"></script>
+  
+  <style>
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #6a11cb;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
 </head>
 <body>
   <header>
     <div class="logo">DripStore <span class="ds-badge">DS</span></div>
     <div class="tagline">Level up Your Premium Drip</div>
+  
+    <!-- User Account Section -->
+    <div class="user-section">
+      <div id="user-guest" class="user-guest">
+        <button class="auth-btn login-btn" onclick="showLoginModal()">Login</button>
+        <button class="auth-btn signup-btn" onclick="showSignupModal()">Sign Up</button>
+      </div>
+      <div id="user-loggedin" class="user-loggedin" style="display: none;">
+        <span class="user-name" id="user-display-name">Welcome, User!</span>
+        <button class="auth-btn logout-btn" onclick="logout()">Logout</button>
+      </div>
+    </div>
   </header>
 
-  <div class="search-bar-container">
-    <input type="text" class="search-bar" id="searchInput" placeholder="Search categories...">
-    <div class="search-icon">🔍</div>
+  <!-- Auth Modals -->
+  <div id="auth-modal" class="auth-modal">
+    <div class="auth-content">
+      <span class="close-auth" onclick="closeAuthModal()">&times;</span>
+      <div id="login-form">
+        <h2>Login to DripStore</h2>
+        <form onsubmit="handleLogin(event)">
+          <input type="email" id="login-email" placeholder="Email" required>
+          <input type="password" id="login-password" placeholder="Password" required>
+          <button type="submit" class="auth-submit-btn">Login</button>
+        </form>
+        <p>Don't have an account? <a href="#" onclick="showSignupForm()">Sign up</a></p>
+      </div>
+      
+      <div id="signup-form" style="display: none;">
+        <h2>Join DripStore</h2>
+        <form onsubmit="handleSignup(event)">
+          <input type="text" id="signup-name" placeholder="Full Name" required>
+          <input type="email" id="signup-email" placeholder="Email" required>
+          <input type="password" id="signup-password" placeholder="Password" required>
+          <input type="tel" id="signup-phone" placeholder="Phone Number">
+          <button type="submit" class="auth-submit-btn">Create Account</button>
+        </form>
+        <p>Already have an account? <a href="#" onclick="showLoginForm()">Login</a></p>
+      </div>
+    </div>
   </div>
 
-  <div class="categories">
-    <div class="category active" data-category="all">All</div>
-    <div class="category" data-category="Clothing">Clothing</div>
-    <div class="category" data-category="Home & Living">Home & Living</div>
-    <div class="category" data-category="Jewelry">Jewelry</div>
-    <div class="category" data-category="Wedding">Wedding</div>
-    <div class="category" data-category="Art & Collectibles">Art & Collectibles</div>
-  </div>
-  
-  <div class="filters">
-    <div class="filter-option">
-      <input type="checkbox" id="exclude-digital" checked>
-      <label for="exclude-digital">Exclude digital items</label>
-    </div>
-    <div class="filter-option">
-      <input type="checkbox" id="designhub">
-      <label for="designhub">DesignHub</label>
-    </div>
-  </div>
-  
-  <div class="sort-options">
-    <div><strong>Sort by:</strong> </div>
-    <select class="sort-select">
-      <option>Relevant</option>
-      <option>Price: Low to High</option>
-      <option>Price: High to Low</option>
-      <option>Highest Rated</option>
-      <option>Most Reviews</option>
-    </select>
+  <div class="cart-icon" onclick="toggleCart()">
+    🛒
+    <span class="cart-count" id="cart-count">0</span>
   </div>
 
-  <!-- SEARCH RESULTS INFO -->
-  <div class="search-results-info" id="searchResultsInfo"></div>
-  
-  <!-- Dynamic Products Container -->
-  <div class="products-grid" id="products-container">
-    <!-- JavaScript will insert products here -->
+  <!-- Cart Overlay -->
+  <div class="cart-overlay" id="cart-overlay" onclick="closeCart()"></div>
+
+  <!-- Cart Sidebar -->
+  <div class="cart-sidebar" id="cart-sidebar">
+    <div class="cart-header">
+      <h2>Your Shopping Cart</h2>
+      <button class="close-cart" onclick="closeCart()">×</button>
+    </div>
+    
+    <div id="cart-items-container">
+      <!-- Cart items will be inserted here -->
+    </div>
+    
+    <div class="cart-summary">
+      <div class="cart-total">
+        Total: $<span id="cart-total">0.00</span>
+      </div>
+      <div class="item-count">
+        <span id="total-items">0</span> items
+      </div>
+    </div>
+    
+    <div class="cart-actions">
+      <!-- Payment Options -->
+      <div class="payment-options">
+        <button class="checkout-btn stripe-btn" onclick="checkoutWithStripe()">
+          💳 Pay with Card
+        </button>
+        <button class="checkout-btn whatsapp-btn" onclick="checkoutWithWhatsApp()">
+          📱 Order via WhatsApp
+        </button>
+      </div>
+      <button class="continue-shopping" onclick="closeCart()">
+        Continue Shopping
+      </button>
+      <button class="clear-cart-btn" onclick="clearCart()">
+        🗑️ Clear Cart
+      </button>
+    </div>
   </div>
+
+  <!-- Stripe Payment Element -->
+  <div id="stripe-payment-section" style="display: none;">
+    <div id="payment-element">
+      <!-- Stripe will inject the Payment Element here -->
+    </div>
+    <button id="submit-payment" class="pay-now-btn" onclick="handlePaymentSubmission()">
+      Pay Now $<span id="payment-total">0.00</span>
+    </button>
+    <button class="back-to-cart" onclick="showCartItems()">
+      ← Back to Cart
+    </button>
+  </div>
+
+  <main role="main">
+    <div class="search-bar-container">
+      <input type="text" class="search-bar" id="searchInput" placeholder="Search categories..." />
+      <div class="search-icon">🔍</div>
+    </div>
+
+    <nav aria-label="Product categories" class="categories">
+      <div class="category active" data-category="all">All</div>
+      <div class="category" data-category="Clothing">Clothing</div>
+      <div class="category" data-category="Home & Living">Home & Living</div>
+      <div class="category" data-category="Jewelry">Jewelry</div>
+      <div class="category" data-category="Wedding">Wedding</div>
+      <div class="category" data-category="Art & Collectibles">Art & Collectibles</div>
+    </nav>
+    
+    <section aria-label="Product filters" class="filters">
+      <div class="filter-option">
+        <input type="checkbox" id="exclude-digital" checked />
+        <label for="exclude-digital">Exclude digital items</label>
+      </div>
+      <div class="filter-option">
+        <input type="checkbox" id="designhub" />
+        <label for="designhub">DesignHub</label>
+      </div>
+    </section>
+    
+    <section aria-label="Product sorting" class="sort-options">
+      <div><strong>Sort by:</strong></div>
+      <select class="sort-select">
+        <option>Relevant</option>
+        <option>Price: Low to High</option>
+        <option>Price: High to Low</option>
+        <option>Highest Rated</option>
+        <option>Most Reviews</option>
+      </select>
+    </section>
+
+    <!-- SEARCH RESULTS INFO -->
+    <div role="status" aria-live="polite" class="search-results-info" id="searchResultsInfo"></div>
+    
+    <!-- Dynamic Products Container -->
+    <section aria-label="Products" class="products-grid" id="products-container">
+      <!-- JavaScript will insert products here -->
+    </section>
+  </main>
 
   <footer>
-    <p>&copy; 2025 Dante_Inc. All rights reserved.</p>
+    <p>&copy; 2025 Dante_INC. All rights reserved.</p>
   </footer>
 
   <script>
@@ -67,7 +258,7 @@
       {
         id: 1,
         title: "Polo Ralph Lauren T-Shirt",
-        seller: "Sommy Apparel",
+        seller: "SommyApparel",
         description: "Premium cotton t-shirt for everyday comfort.",
         price: 15.99,
         originalPrice: 29.99,
@@ -127,7 +318,7 @@
       {
         id: 5,
         title: "Summer Dress",
-        seller: "Sommy Wears",
+        seller: "FashionLine",
         description: "Lightweight summer dress with floral pattern.",
         price: 34.99,
         originalPrice: 59.99,
@@ -142,7 +333,7 @@
       {
         id: 6,
         title: "Samsung Smart Watch",
-        seller: "Tech Gadgets",
+        seller: "TechGadgets",
         description: "Feature-rich smartwatch with health monitoring.",
         price: 199.99,
         originalPrice: 299.99,
@@ -187,7 +378,7 @@
       {
         id: 9,
         title: "Design Mockups Bundle",
-        seller: "Sommy Wears",
+        seller: "SommyApparel",
         description: "1500+ Professional design mockups and assets.",
         price: 29.99,
         originalPrice: 99.99,
@@ -203,7 +394,7 @@
         id: 10,
         category: "Home & Living",
         title: "Bose Wireless Headphones",
-        seller: "Audio Tech",
+        seller: "AudioTech",
         description: "Noise-cancelling wireless headphones.",
         price: 89.99,
         originalPrice: 129.99,
@@ -231,8 +422,280 @@
       }
     ];
 
-    // Search functionality
-    function searchCategories(searchTerm) {
+    // CART FUNCTIONALITY WITH QUANTITY
+    let cart = [];
+
+    // Cart Management
+    function addToCart(product) {
+      const existingItem = cart.find(item => item.id === product.id);
+      
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        cart.push({
+          ...product,
+          cartId: Date.now(), // Unique ID for cart items
+          quantity: 1
+        });
+      }
+      
+      updateCartUI();
+      showCartNotification(product.title);
+    }
+
+    function removeFromCart(cartId) {
+      cart = cart.filter(item => item.cartId !== cartId);
+      updateCartUI();
+    }
+
+    function updateQuantity(cartId, change) {
+      const item = cart.find(item => item.cartId === cartId);
+      if (item) {
+        item.quantity += change;
+        
+        // Remove item if quantity reaches 0
+        if (item.quantity <= 0) {
+          removeFromCart(cartId);
+          return;
+        }
+        
+        updateCartUI();
+      }
+    }
+
+    function clearCart() {
+      if (cart.length === 0) return;
+      
+      if (confirm('Are you sure you want to clear your cart?')) {
+        cart = [];
+        updateCartUI();
+        showCartNotification('Cart cleared!');
+      }
+    }
+
+    function updateCartUI() {
+      const cartCount = document.getElementById('cart-count');
+      const cartTotal = document.getElementById('cart-total');
+      const totalItems = document.getElementById('total-items');
+      const cartItemsContainer = document.getElementById('cart-items-container');
+      
+      // Calculate total items and price
+      const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
+      const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      
+      // Update cart count
+      cartCount.textContent = totalQuantity;
+      totalItems.textContent = totalQuantity;
+      cartTotal.textContent = totalPrice.toFixed(2);
+      
+      // Update cart items
+      if (cart.length === 0) {
+        cartItemsContainer.innerHTML = `
+          <div class="empty-cart">
+            <p>Your cart is empty</p>
+            <p>🛒 Add some items to get started!</p>
+          </div>
+        `;
+      } else {
+        cartItemsContainer.innerHTML = cart.map(item => `
+          <div class="cart-item">
+            <img src="${item.imageUrl}" alt="${item.title}" class="cart-item-image">
+            <div class="cart-item-details">
+              <div class="cart-item-title">${item.title}</div>
+              <div class="cart-item-price">$${(item.price * item.quantity).toFixed(2)}</div>
+              <div class="quantity-controls">
+                <button class="quantity-btn" onclick="updateQuantity(${item.cartId}, -1)">−</button>
+                <span class="quantity">${item.quantity}</span>
+                <button class="quantity-btn" onclick="updateQuantity(${item.cartId}, 1)">+</button>
+              </div>
+            </div>
+            <button class="remove-item" onclick="removeFromCart(${item.cartId})" title="Remove item">
+              ×
+            </button>
+          </div>
+        `).join('');
+      }
+    }
+
+    // Cart UI Controls
+    function toggleCart() {
+      document.getElementById('cart-sidebar').classList.toggle('active');
+      document.getElementById('cart-overlay').classList.toggle('active');
+    }
+
+    function closeCart() {
+      document.getElementById('cart-sidebar').classList.remove('active');
+      document.getElementById('cart-overlay').classList.remove('active');
+    }
+
+    function showCartNotification(productName) {
+      // Simple notification
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        background: #25D366;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        z-index: 1003;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      `;
+      notification.textContent = `✅ ${productName} added to cart!`;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        document.body.removeChild(notification);
+      }, 3000);
+    }
+
+    // Updated Checkout Function with Quantities
+    function checkout() {
+      if (cart.length === 0) {
+        alert('Your cart is empty!');
+        return;
+      }
+
+      let message = "🛒 DRIPSTORE ORDER 🛒\n\n";
+      message += "Order Details:\n";
+      
+      cart.forEach((item, index) => {
+        message += `${index + 1}. ${item.title} (Qty: ${item.quantity}) - $${(item.price * item.quantity).toFixed(2)}\n`;
+      });
+      
+      const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      message += `\n💰 TOTAL: $${totalPrice.toFixed(2)}`;
+      message += `\n\nCustomer Information:\n`;
+      message += `• Name: \n`;
+      message += `• Address: \n`;
+      message += `• Phone: \n\n`;
+      message += `Please provide the above details to complete your order. Thank you! 🛍️`;
+
+      const phoneNumber = "8166746199";
+      const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+      
+      window.open(url, '_blank');
+    }
+
+    // Quick add function for product cards
+    function quickAddToCart(product, quantity = 1) {
+      for (let i = 0; i < quantity; i++) {
+        addToCart(product);
+      }
+    }
+
+    // WhatsApp order function
+    function orderProduct(productName, productPrice) {
+      const message = `🛒 ORDER REQUEST 🛒\n\n📦 Product: ${productName}\n💰 Price: $${productPrice}\n\nHello! I would like to order this product. Please provide:\n• Availability\n• Shipping options\n• Payment methods\n\nThank you!`;
+      const url = `https://wa.me/8166746199?text=${encodeURIComponent(message)}`;
+      window.open(url, '_blank');
+    }
+
+    // Flip card function
+    function flipCard(element) {
+      const card = element.closest('.product-card');
+      card.classList.toggle('flipped');
+    }
+
+    // Make entire card clickable for flipping (except buttons/links)
+    function setupCardClicks() {
+      document.addEventListener('click', function(event) {
+        const card = event.target.closest('.product-card');
+        const isButton = event.target.closest('button');
+        const isLink = event.target.closest('a');
+        
+        if (card && !isButton && !isLink) {
+          // Only flip if clicking on the card itself, not buttons/links
+          card.classList.toggle('flipped');
+        }
+      });
+    }
+
+    // Close flip when clicking outside
+    document.addEventListener('click', function(event) {
+      if (!event.target.closest('.product-card')) {
+        document.querySelectorAll('.product-card.flipped').forEach(card => {
+          card.classList.remove('flipped');
+        });
+      }
+    });
+
+    // Function to render products
+    function renderProducts(productsToRender) {
+      const container = document.getElementById('products-container');
+      container.innerHTML = '';
+      
+      if (productsToRender.length === 0) {
+        container.innerHTML = '<div class="no-results">No products found. Try a different category search.</div>';
+        return;
+      }
+      
+      productsToRender.forEach(product => {
+        const productCard = document.createElement('div');
+        productCard.className = 'product-card';
+        productCard.dataset.productId = product.id;
+        
+        const stars = '★'.repeat(Math.floor(product.rating)) + '☆'.repeat(5 - Math.floor(product.rating));
+        
+        productCard.innerHTML = `
+          <div class="card-inner">
+            <div class="card-front">
+              <div class="product-image">
+                <img src="${product.imageUrl}" alt="${product.title}" loading="lazy">
+              </div>
+              <div class="product-info">
+                <div class="product-title">${product.title}</div>
+                <div class="product-seller">by ${product.seller}</div>
+                <div class="product-price">
+                  <span class="current-price">$${product.price.toFixed(2)}</span>
+                  <span class="originalPrice">$${product.originalPrice.toFixed(2)}</span>
+                  <span class="discount">${product.discount}% OFF</span>
+                </div>
+                <div class="product-rating">
+                  <span class="rating-stars">${stars}</span>
+                  <span class="reviews">(${product.reviews})</span>
+                </div>
+                <div>
+                  ${product.badge ? `<span class="badge">${product.badge}</span>` : ''}
+                  ${product.isDigital ? `<span class="digital-tag">DIGITAL</span>` : ''}
+                </div>
+                
+                <!-- UPDATED BUTTONS -->
+                <div class="product-actions">
+                  <button class="add-to-cart-btn" onclick="addToCart(${JSON.stringify(product).replace(/"/g, '&quot;')})">
+                    🛒 Add to Cart
+                  </button>
+                  <button class="buy-now-btn" onclick="orderProduct('${product.title.replace(/'/g, "\\'")}', ${product.price})">
+                    📱 Buy Now
+                  </button>
+                </div>
+                
+                <button class="flip-btn" onclick="flipCard(this)">
+                  👀 View Full Image
+                </button>
+              </div>
+            </div>
+            <div class="card-back">
+              <div class="full-image-container">
+                <img src="${product.imageUrl}" alt="${product.title}" loading="lazy">
+              </div>
+              <button class="flip-btn back" onclick="flipCard(this)">
+                ← Back to Details
+              </button>
+            </div>
+          </div>
+        `;
+        
+        container.appendChild(productCard);
+      });
+      
+      // Setup card click functionality after rendering
+      setTimeout(setupCardClicks, 0);
+    }
+
+    // Enhanced search functionality
+    function enhancedSearch(searchTerm) {
       const searchLower = searchTerm.toLowerCase().trim();
       
       if (searchLower === '') {
@@ -242,134 +705,23 @@
       }
 
       const filteredProducts = products.filter(product => {
-        const category = product.category || '';
-        return category.toLowerCase().includes(searchLower);
+        const title = product.title.toLowerCase();
+        const seller = product.seller.toLowerCase();
+        const category = product.category.toLowerCase();
+        const description = product.description.toLowerCase();
+        
+        return title.includes(searchLower) || 
+               seller.includes(searchLower) || 
+               category.includes(searchLower) ||
+               description.includes(searchLower);
       });
 
       const resultsInfo = document.getElementById('searchResultsInfo');
-      if (filteredProducts.length > 0) {
-        resultsInfo.textContent = `Found ${filteredProducts.length} products in "${searchTerm}" category`;
-        resultsInfo.style.color = '#25D366';
-      } else {
-        resultsInfo.textContent = `No products found in "${searchTerm}" category`;
-        resultsInfo.style.color = '#ff4757';
-      }
+      resultsInfo.textContent = `Found ${filteredProducts.length} products for "${searchTerm}"`;
+      resultsInfo.style.color = filteredProducts.length > 0 ? '#25D366' : '#ff4757';
 
       renderProducts(filteredProducts);
     }
-
-    // Initialize search
-    document.getElementById('searchInput').addEventListener('input', function(e) {
-      searchCategories(e.target.value);
-    });
-
-    // Clear search when category is clicked
-    document.querySelectorAll('.category').forEach(category => {
-      category.addEventListener('click', function() {
-        document.getElementById('searchInput').value = '';
-        document.getElementById('searchResultsInfo').textContent = '';
-      });
-    });
-
-    // WhatsApp order function
-    function orderProduct(productName, productPrice) {
-      const phoneNumber = "8166746199";
-      const message = `🛒 ORDER REQUEST 🛒\n\n📦 Product: ${productName}\n💰 Price: $${productPrice}\n\nHello! I would like to order this product. Please provide:\n• Availability\n• Shipping options\n• Payment methods\n\nThank you!`;
-      const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-      window.open(url, '_blank');
-    }
-
-    // Flip card function
-    function flipCard(element) {
-      const card = element.closest('.product-card');
-      card.classList.toggle('flipped');
-    }
-/// Make entire card clickable for flipping (except buttons)
-function setupCardClicks() {
-  document.addEventListener('click', function(event) {
-    const card = event.target.closest('.product-card');
-    const isButton = event.target.closest('button');
-    const isLink = event.target.closest('a');
-    
-    if (card && !isButton && !isLink) {
-      // Only flip if clicking on the card itself, not buttons/links
-      card.classList.toggle('flipped');
-    }
-  });
-}
-
-// Close flip when clicking outside
-document.addEventListener('click', function(event) {
-  if (!event.target.closest('.product-card')) {
-    document.querySelectorAll('.product-card.flipped').forEach(card => {
-      card.classList.remove('flipped');
-    });
-  }
-});
-
-// Initialize card clicks after products are rendered
-function renderProducts(productsToRender) {
-  const container = document.getElementById('products-container');
-  container.innerHTML = '';
-  
-  if (productsToRender.length === 0) {
-    container.innerHTML = '<div class="no-results">No products found. Try a different category search.</div>';
-    return;
-  }
-  
-  productsToRender.forEach(product => {
-    const productCard = document.createElement('div');
-    productCard.className = 'product-card';
-    
-    const stars = '★'.repeat(Math.floor(product.rating)) + '☆'.repeat(5 - Math.floor(product.rating));
-    
-    productCard.innerHTML = `
-      <div class="card-inner">
-        <div class="card-front">
-          <div class="product-image">
-            <img src="${product.imageUrl}" alt="${product.title}">
-          </div>
-          <div class="product-info">
-            <div class="product-title">${product.title}</div>
-            <div class="product-seller">by ${product.seller}</div>
-            <div class="product-price">
-              <span class="current-price">$${product.price.toFixed(2)}</span>
-              <span class="originalPrice">$${product.originalPrice.toFixed(2)}</span>
-              <span class="discount">${product.discount}% OFF</span>
-            </div>
-            <div class="product-rating">
-              <span class="rating-stars">${stars}</span>
-              <span class="reviews">(${product.reviews})</span>
-            </div>
-            <div>
-              ${product.badge ? `<span class="badge">${product.badge}</span>` : ''}
-              ${product.isDigital ? `<span class="digital-tag">DIGITAL</span>` : ''}
-            </div>
-            <button class="order-now-btn" onclick="orderProduct('${product.title}', ${product.price})">
-              🛒 Order Now
-            </button>
-            <button class="flip-btn" onclick="flipCard(this)">
-              👀 View Full Image
-            </button>
-          </div>
-        </div>
-        <div class="card-back">
-          <div class="full-image-container">
-            <img src="${product.imageUrl}" alt="${product.title}">
-          </div>
-          <button class="flip-btn back" onclick="flipCard(this)">
-            ← Back to Details
-          </button>
-        </div>
-      </div>
-    `;
-    
-    container.appendChild(productCard);
-  });
-  
-  // Setup card click functionality after rendering
-  setTimeout(setupCardClicks, 0);
-}
 
     // Category filter function
     function filterByCategory(category) {
@@ -408,6 +760,19 @@ function renderProducts(productsToRender) {
       document.getElementById('products-container').innerHTML = '';
       renderProducts(filteredProducts);
     }
+
+    // Initialize search
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+      enhancedSearch(e.target.value);
+    });
+
+    // Clear search when category is clicked
+    document.querySelectorAll('.category').forEach(category => {
+      category.addEventListener('click', function() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('searchResultsInfo').textContent = '';
+      });
+    });
 
     // Category filter functionality
     document.querySelectorAll('.category').forEach(category => {
@@ -470,9 +835,372 @@ function renderProducts(productsToRender) {
       renderProducts(filteredProducts);
     });
 
+    // Initialize cart
+    updateCartUI();
+
     // Initial render
     renderProducts(products);
+
+    // STRIPE & USER AUTHENTICATION
+    const stripe = Stripe('pk_test_51SYV4BLlqrEImrpBLzmKcW88bUqjfAtBo2KhnUUIjrI0d6GZ50zTjaIoHZgBoHAuqgHHEnZQDgf7TdFQIOuao8TQ00FwNyLeco'); 
+
+    // User Management
+    let currentUser = null;
+    let users = JSON.parse(localStorage.getItem('dripstore_users')) || [];
+
+    // Initialize Stripe
+    let elements;
+    let clientSecret;
+
+    // Helper function to calculate cart total
+    function calculateTotal() {
+      return cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    }
+
+    // Auth Modal Functions
+    function showLoginModal() {
+      document.getElementById('auth-modal').style.display = 'block';
+      showLoginForm();
+    }
+
+    function showSignupModal() {
+      document.getElementById('auth-modal').style.display = 'block';
+      showSignupForm();
+    }
+
+    function closeAuthModal() {
+      document.getElementById('auth-modal').style.display = 'none';
+    }
+
+    function showLoginForm() {
+      document.getElementById('login-form').style.display = 'block';
+      document.getElementById('signup-form').style.display = 'none';
+    }
+
+    function showSignupForm() {
+      document.getElementById('login-form').style.display = 'none';
+      document.getElementById('signup-form').style.display = 'block';
+    }
+
+    // Auth Handlers
+    function handleSignup(event) {
+      event.preventDefault();
+      
+      const userData = {
+        id: Date.now(),
+        name: document.getElementById('signup-name').value,
+        email: document.getElementById('signup-email').value,
+        password: document.getElementById('signup-password').value,
+        phone: document.getElementById('signup-phone').value,
+        createdAt: new Date().toISOString(),
+        orders: [],
+        addresses: []
+      };
+
+      // Check if user already exists
+      if (users.find(u => u.email === userData.email)) {
+        alert('User already exists with this email!');
+        return;
+      }
+
+      users.push(userData);
+      localStorage.setItem('dripstore_users', JSON.stringify(users));
+      
+      currentUser = userData;
+      updateUserUI();
+      closeAuthModal();
+      alert('Account created successfully! Welcome to DripStore 🎉');
+    }
+
+    function handleLogin(event) {
+      event.preventDefault();
+      
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      
+      const user = users.find(u => u.email === email && u.password === password);
+      
+      if (user) {
+        currentUser = user;
+        updateUserUI();
+        closeAuthModal();
+        alert(`Welcome back, ${user.name}! 👋`);
+      } else {
+        alert('Invalid email or password!');
+      }
+    }
+
+    function logout() {
+      currentUser = null;
+      updateUserUI();
+      alert('Logged out successfully!');
+    }
+
+    function updateUserUI() {
+      const guestSection = document.getElementById('user-guest');
+      const loggedInSection = document.getElementById('user-loggedin');
+      const userNameDisplay = document.getElementById('user-display-name');
+      
+      if (currentUser) {
+        guestSection.style.display = 'none';
+        loggedInSection.style.display = 'flex';
+        userNameDisplay.textContent = `Welcome, ${currentUser.name.split(' ')[0]}!`;
+      } else {
+        guestSection.style.display = 'flex';
+        loggedInSection.style.display = 'none';
+      }
+    }
+
+    // STRIPE PAYMENT FUNCTIONS
+    async function checkoutWithStripe() {
+      if (!currentUser) {
+        alert('Please login to proceed with payment!');
+        showLoginModal();
+        return;
+      }
+
+      if (cart.length === 0) {
+        alert('Your cart is empty!');
+        return;
+      }
+
+      try {
+        showDemoPaymentForm();
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Payment setup failed. Please try again.');
+      }
+    }
+
+    function showDemoPaymentForm() {
+      // Hide cart items and show demo payment form
+      document.getElementById('cart-items-container').style.display = 'none';
+      document.querySelector('.cart-actions').style.display = 'none';
+      document.getElementById('stripe-payment-section').style.display = 'block';
+      document.getElementById('payment-total').textContent = calculateTotal().toFixed(2);
+      
+      // Create demo payment form
+      const paymentElement = document.getElementById('payment-element');
+      paymentElement.innerHTML = `
+        <div class="demo-payment-form">
+          <h3>💳 Demo Payment Form</h3>
+          <p><strong>Note:</strong> This is a demo. In a real implementation, you would connect to your Stripe backend.</p>
+          
+          <div class="demo-form-group">
+            <label>Card Number</label>
+            <input type="text" value="4242 4242 4242 4242" readonly class="demo-input">
+          </div>
+          
+          <div class="demo-form-row">
+            <div class="demo-form-group">
+              <label>Expiry Date</label>
+              <input type="text" value="12/34" readonly class="demo-input">
+            </div>
+            
+            <div class="demo-form-group">
+              <label>CVC</label>
+              <input type="text" value="123" readonly class="demo-input">
+            </div>
+          </div>
+          
+          <div class="demo-form-group">
+            <label>Name on Card</label>
+            <input type="text" value="Demo User" readonly class="demo-input">
+          </div>
+          
+          <p class="demo-note">💡 Use test card: 4242 4242 4242 4242</p>
+        </div>
+      `;
+    }
+
+    async function handlePaymentSubmission() {
+      if (!currentUser) return;
+
+      const submitButton = document.getElementById('submit-payment');
+      submitButton.disabled = true;
+      submitButton.textContent = 'Processing...';
+
+      try {
+        // Simulate payment processing delay
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Simulate successful payment
+        alert('✅ Payment successful! This is a demo. In production, this would process through Stripe.');
+        
+        // Save order and clear cart
+        const order = {
+          id: 'demo_payment_' + Date.now(),
+          status: 'succeeded',
+          items: [...cart],
+          total: calculateTotal(),
+          createdAt: new Date().toISOString()
+        };
+        
+        // Save to user's order history
+        currentUser.orders.push(order);
+        const userIndex = users.findIndex(u => u.id === currentUser.id);
+        if (userIndex !== -1) {
+          users[userIndex] = currentUser;
+          localStorage.setItem('dripstore_users', JSON.stringify(users));
+        }
+        
+        // Clear cart and reset UI
+        cart = [];
+        updateCartUI();
+        closeCart();
+        showCartItems(); // Reset to cart view
+        
+      } catch (error) {
+        console.error('Payment error:', error);
+        alert('Payment failed. Please try again.');
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = `Pay Now $${calculateTotal().toFixed(2)}`;
+      }
+    }
+
+    function showCartItems() {
+      document.getElementById('cart-items-container').style.display = 'block';
+      document.querySelector('.cart-actions').style.display = 'block';
+      document.getElementById('stripe-payment-section').style.display = 'none';
+    }
+
+    // Order Management
+    async function saveOrder(paymentIntent) {
+      const order = {
+        id: `DS_${Date.now()}`,
+        paymentIntentId: paymentIntent.id,
+        customerId: currentUser.id,
+        items: [...cart],
+        total: calculateTotal(),
+        status: 'paid',
+        shippingAddress: currentUser.addresses[0] || {},
+        createdAt: new Date().toISOString()
+      };
+
+      // Save to user's order history
+      currentUser.orders.push(order);
+      const userIndex = users.findIndex(u => u.id === currentUser.id);
+      if (userIndex !== -1) {
+        users[userIndex] = currentUser;
+        localStorage.setItem('dripstore_users', JSON.stringify(users));
+      }
+
+      // In a real app, you'd send this to your backend
+      console.log('Order saved:', order);
+      
+      // Clear cart after successful order
+      cart = [];
+      updateCartUI();
+    }
+
+    // Updated Checkout Functions
+    function checkoutWithWhatsApp() {
+      if (cart.length === 0) {
+        alert('Your cart is empty!');
+        return;
+      }
+
+      let message = "🛒 DRIPSTORE ORDER 🛒\n\n";
+      message += "Order Details:\n";
+      
+      cart.forEach((item, index) => {
+        message += `${index + 1}. ${item.title} (Qty: ${item.quantity}) - $${(item.price * item.quantity).toFixed(2)}\n`;
+      });
+      
+      const totalPrice = calculateTotal();
+      message += `\n💰 TOTAL: $${totalPrice.toFixed(2)}`;
+      message += `\n\nCustomer Information:\n`;
+      message += `• Name: ${currentUser ? currentUser.name : '[Please provide]'}\n`;
+      message += `• Email: ${currentUser ? currentUser.email : '[Please provide]'}\n`;
+      message += `• Phone: ${currentUser ? currentUser.phone : '[Please provide]'}\n`;
+      message += `• Address: \n\n`;
+      message += `Please provide any missing details to complete your order. Thank you! 🛍️`;
+
+      const phoneNumber = "8166746199";
+      const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+      
+      window.open(url, '_blank');
+    }
+
+    // Generate structured data for products
+    function generateProductStructuredData() {
+      const productData = products.map(product => ({
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        "name": product.title,
+        "description": product.description,
+        "image": product.imageUrl,
+        "sku": `DS${product.id}`,
+        "brand": {
+          "@type": "Brand",
+          "name": product.seller
+        },
+        "offers": {
+          "@type": "Offer",
+          "url": `https://dripstore-ds.com/products/${product.id}`,
+          "priceCurrency": "USD",
+          "price": product.price,
+          "priceValidUntil": new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          "availability": "https://schema.org/InStock",
+          "seller": {
+            "@type": "Organization",
+            "name": "DripStore DS"
+          }
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": product.rating,
+          "reviewCount": product.reviews
+        }
+      }));
+
+      // Add to page
+      const script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.textContent = JSON.stringify(productData);
+      document.head.appendChild(script);
+    }
+
+    // Add breadcrumb structured data
+    function generateBreadcrumbStructuredData() {
+      const breadcrumbData = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://dripstore-ds.com"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Products",
+            "item": "https://dripstore-ds.com/products"
+          }
+        ]
+      };
+
+      const script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.textContent = JSON.stringify(breadcrumbData);
+      document.head.appendChild(script);
+    }
+
+    // Initialize user state on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      updateUserUI();
+      generateProductStructuredData();
+      generateBreadcrumbStructuredData();
+      
+      // Check for payment success redirect
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('payment_success') === 'true') {
+        alert('Payment successful! Thank you for your order. 🎉');
+      }
+    });
   </script>
 </body>
-
 </html>
